@@ -1,5 +1,6 @@
-package com.github.pedroluis02.ormdbsample
+package com.github.pedroluis02.ormdbsample.repository
 
+import com.github.pedroluis02.ormdbsample.service.User
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
@@ -8,37 +9,35 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.update
 
-class UserService {
+class UserRepository {
 
-    suspend fun create(user: ExposedUser): Int = dbQuery {
-        Users.insert {
+    suspend fun create(user: User): User = dbQuery {
+        val generatedId = Users.insert {
             it[name] = user.name
             it[age] = user.age
         }[Users.id]
+
+        user.copy(id = generatedId)
     }
 
-    suspend fun read(id: Int): ExposedUser? {
-        return dbQuery {
-            Users.selectAll()
-                .where { Users.id eq id }
-                .map { ExposedUser(it[Users.name], it[Users.age]) }
-                .singleOrNull()
-        }
+    suspend fun read(id: Int): User? = dbQuery {
+        Users.selectAll()
+            .where { Users.id eq id }
+            .map { User(it[Users.id], it[Users.name], it[Users.age]) }
+            .singleOrNull()
     }
 
-    suspend fun update(id: Int, user: ExposedUser) {
+    suspend fun update(user: User) {
         dbQuery {
-            Users.update({ Users.id eq id }) {
+            Users.update({ Users.id eq user.id }) {
                 it[name] = user.name
                 it[age] = user.age
             }
         }
     }
 
-    suspend fun delete(id: Int) {
-        dbQuery {
-            Users.deleteWhere { Users.id.eq(id) }
-        }
+    suspend fun delete(id: Int) = dbQuery {
+        Users.deleteWhere { Users.id.eq(id) }
     }
 
     private suspend fun <T> dbQuery(block: suspend () -> T): T =

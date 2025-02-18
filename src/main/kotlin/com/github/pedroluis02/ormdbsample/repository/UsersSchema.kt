@@ -1,4 +1,4 @@
-package com.github.pedroluis02.ormdbsample
+package com.github.pedroluis02.ormdbsample.repository
 
 import org.jetbrains.exposed.sql.Table
 

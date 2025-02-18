@@ -1,5 +1,6 @@
-package com.github.pedroluis02.ormdbsample
+package com.github.pedroluis02.ormdbsample.routing
 
+import com.github.pedroluis02.ormdbsample.service.UserService
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*

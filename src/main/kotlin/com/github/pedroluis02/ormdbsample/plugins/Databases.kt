@@ -1,5 +1,6 @@
-package com.github.pedroluis02.ormdbsample
+package com.github.pedroluis02.ormdbsample.plugins
 
+import com.github.pedroluis02.ormdbsample.repository.Users
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*

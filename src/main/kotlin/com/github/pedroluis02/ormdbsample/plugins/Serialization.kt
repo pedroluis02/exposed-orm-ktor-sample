@@ -1,4 +1,4 @@
-package com.github.pedroluis02.ormdbsample
+package com.github.pedroluis02.ormdbsample.plugins
 
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
