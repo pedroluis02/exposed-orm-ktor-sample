@@ -2,12 +2,9 @@ package com.github.pedroluis02.ormdbsample.repository
 
 import com.github.pedroluis02.ormdbsample.service.User
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.update
 
 class UserRepository {
 
@@ -20,10 +17,15 @@ class UserRepository {
         user.copy(id = generatedId)
     }
 
+    suspend fun readAll(): List<User> = dbQuery {
+        Users.selectAll()
+            .map(::toModel)
+    }
+
     suspend fun read(id: Int): User? = dbQuery {
         Users.selectAll()
             .where { Users.id eq id }
-            .map { User(it[Users.id], it[Users.name], it[Users.age]) }
+            .map(::toModel)
             .singleOrNull()
     }
 
@@ -43,3 +45,5 @@ class UserRepository {
     private suspend fun <T> dbQuery(block: suspend () -> T): T =
         newSuspendedTransaction(Dispatchers.IO) { block() }
 }
+
+private fun toModel(it: ResultRow): User = User(it[Users.id], it[Users.name], it[Users.age])

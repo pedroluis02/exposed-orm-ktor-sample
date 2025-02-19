@@ -14,6 +14,11 @@ fun Route.userRoute(userService: UserService) {
         call.respond(HttpStatusCode.Created, user.toDto())
     }
 
+    get {
+        val users = userService.readAll()
+        call.respond(HttpStatusCode.OK, users.map { it.toDto() })
+    }
+
     get("/{id}") {
         val id = call.extractIDOrThrow()
         val user = userService.read(id)
